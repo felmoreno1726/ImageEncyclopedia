@@ -3,4 +3,5 @@
     <string name="action_settings">Settings</string>
     <string name="upload_your_image">Upload your image</string>
     <string name="displayimage">DisplayImage</string>
+    <string name="imageviewfortesting">ImageViewForTesting</string>
 </resources>

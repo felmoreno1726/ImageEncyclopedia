@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 import java.io.InputStream;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     static {
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private int[] INPUT_SIZE = {224,224,3};
 
     ImageView imageView;
+    ImageView imageViewTest; //remove this
     TextView resultView;
     Snackbar progressBar;
 
@@ -61,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
             protected Integer doInBackground(Integer ...params){
                 //Resize the image into 224 x 224
                 Bitmap resized_image = ImageUtils.processBitmap(bitmap,224);
+                // remove everything beginning here:
+                imageViewTest = (ImageView) findViewById(R.id.imageView2);
+                imageViewTest.setImageBitmap(resized_image);
+                // remove till here
                 //Normalize the pixels
                 floatValues = ImageUtils.normalizeBitmap(resized_image,224,127.5f,1.0f);
                 //Pass input into the tensorflow
@@ -72,10 +78,11 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Fetched predictions");
                 //Obtained highest prediction
                 Object[] results = argmax(PREDICTIONS);
-                System.out.println("Predictions: " + PREDICTIONS);
-                System.out.println("Results: " + results);
+                System.out.println("Predictions: " + Arrays.toString(PREDICTIONS));
                 int class_index = (Integer) results[0];
+                System.out.println("Class index: " + class_index);
                 float confidence = (Float) results[1];
+                System.out.println("Confident: " + confidence);
                 try{
                     final String conf = String.valueOf(confidence * 100).substring(0,5);
                     System.out.println("Confidence: " + conf);
@@ -88,9 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             progressBar.dismiss();
-                            System.out.println("DIsmissed progress bar");
                             resultView.setText(label + " : " + conf + "%");
-                            System.out.print("should be displaying the label on the textView");
                         }
                     });
                 }

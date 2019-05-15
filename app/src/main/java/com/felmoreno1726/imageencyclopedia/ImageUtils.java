@@ -29,34 +29,28 @@ public class ImageUtils {
      * @return The transformation fulfilling the desired requirements.
      */
     public static Matrix getTransformationMatrix(
-            final int srcWidth,
-            final int srcHeight,
-            final int dstWidth,
-            final int dstHeight,
-            final int applyRotation,
-            final boolean maintainAspectRatio) {
+        final int srcWidth,
+        final int srcHeight,
+        final int dstWidth,
+        final int dstHeight,
+        final int applyRotation,
+        final boolean maintainAspectRatio) {
         final Matrix matrix = new Matrix();
-
         if (applyRotation != 0) {
             // Translate so center of image is at origin.
             matrix.postTranslate(-srcWidth / 2.0f, -srcHeight / 2.0f);
-
             // Rotate around origin.
             matrix.postRotate(applyRotation);
         }
-
         // Account for the already applied rotation, if any, and then determine how
         // much scaling is needed for each axis.
         final boolean transpose = (Math.abs(applyRotation) + 90) % 180 == 0;
-
         final int inWidth = transpose ? srcHeight : srcWidth;
         final int inHeight = transpose ? srcWidth : srcHeight;
-
         // Apply scaling if necessary.
         if (inWidth != dstWidth || inHeight != dstHeight) {
             final float scaleFactorX = dstWidth / (float) inWidth;
             final float scaleFactorY = dstHeight / (float) inHeight;
-
             if (maintainAspectRatio) {
                 // Scale by minimum factor so that dst is filled completely while
                 // maintaining the aspect ratio. Some image may fall off the edge.
@@ -67,41 +61,29 @@ public class ImageUtils {
                 matrix.postScale(scaleFactorX, scaleFactorY);
             }
         }
-
         if (applyRotation != 0) {
             // Translate back from origin centered reference to destination frame.
             matrix.postTranslate(dstWidth / 2.0f, dstHeight / 2.0f);
         }
-
         return matrix;
     }
 
 
     public static Bitmap processBitmap(Bitmap source,int size){
-
         int image_height = source.getHeight();
         int image_width = source.getWidth();
-
         Bitmap croppedBitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-
         Matrix frameToCropTransformations = getTransformationMatrix(image_width,image_height,size,size,0,false);
         Matrix cropToFrameTransformations = new Matrix();
         frameToCropTransformations.invert(cropToFrameTransformations);
-
         final Canvas canvas = new Canvas(croppedBitmap);
         canvas.drawBitmap(source, frameToCropTransformations, null);
-
         return croppedBitmap;
-
-
     }
 
     public static float[] normalizeBitmap(Bitmap source,int size,float mean,float std){
-
         float[] output = new float[size * size * 3];
-
         int[] intValues = new int[source.getHeight() * source.getWidth()];
-
         source.getPixels(intValues, 0, source.getWidth(), 0, 0, source.getWidth(), source.getHeight());
         for (int i = 0; i < intValues.length; ++i) {
             final int val = intValues[i];
@@ -109,14 +91,10 @@ public class ImageUtils {
             output[i * 3 + 1] = (((val >> 8) & 0xFF) - mean)/std;
             output[i * 3 + 2] = ((val & 0xFF) - mean)/std;
         }
-
         return output;
-
     }
 
     public static Object[] argmax(float[] array){
-
-
         int best = -1;
         float best_confidence = 0.0f;
         for(int i = 0;i < array.length;i++){
@@ -127,8 +105,6 @@ public class ImageUtils {
             }
         }
         return new Object[]{best,best_confidence};
-
-
     }
 
 
