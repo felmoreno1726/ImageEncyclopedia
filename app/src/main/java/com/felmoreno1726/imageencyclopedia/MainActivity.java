@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -27,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //PATH TO OUR MODEL FILE AND NAMES OF THE INPUT AND OUTPUT NODES
-    private String MODEL_PATH = "file:///android_asset/output_model/mobile_model.pb";
+    private final String MODEL_NAME = "mobilenet.pb";
+    private final String MODEL_DIR = "file:///android_asset/tensorflow_models/";
+    private String MODEL_PATH = MODEL_DIR + MODEL_NAME;
     private String INPUT_NAME = "input_1";
     private String OUTPUT_NAME = "output_1";
     private TensorFlowInferenceInterface tf;
@@ -46,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
     private static int RESULT_TAKE_PICTURE = 2;
 
     public Object[] argmax(float[] array) {
-        /**
-         * Computes the maximum predictions of confidence
-         */
+    /*
+     * Computes the maximum predictions of confidence
+     */
         int best = -1;
         float best_confidence = 0.0f;
         for (int i = 0; i < array.length; i++) {
